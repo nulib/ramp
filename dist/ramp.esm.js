@@ -7387,6 +7387,11 @@ var MediaPlayer = function MediaPlayer(_ref) {
         mediaType = _getMediaInfo.mediaType,
         canvas = _getMediaInfo.canvas,
         error = _getMediaInfo.error;
+      if (withCredentials) {
+        sources.map(function (source) {
+          return source.withCredentials = true;
+        });
+      }
       setIsVideo(mediaType === 'video');
       manifestDispatch({
         canvasTargets: canvasTargets,
@@ -7579,11 +7584,6 @@ var MediaPlayer = function MediaPlayer(_ref) {
     }
   };
   React.useEffect(function () {
-    var hlsOptions = withCredentials ? {
-      hls: {
-        withCredentials: true
-      }
-    } : {};
     var videoJsOptions;
     // Only build the full set of option for the first playable Canvas since
     // these options are only used on the initia Video.js instance creation
@@ -7628,9 +7628,9 @@ var MediaPlayer = function MediaPlayer(_ref) {
         },
         sources: isMultiSourced ? [playerConfig.sources[srcIndex]] : playerConfig.sources,
         // Enable native text track functionality in iPhones and iPads
-        html5: _objectSpread$3(_objectSpread$3({}, hlsOptions), {}, {
+        html5: {
           nativeTextTracks: IS_MOBILE && !IS_ANDROID
-        }),
+        },
         /* 
           Setting this option helps to override VideoJS's default 'keydown' event handler, whenever
           the focus is on a native VideoJS control icon (e.g. play toggle).

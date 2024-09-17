@@ -212,6 +212,70 @@ describe('MediaPlayer component', () => {
     });
   });
 
+  describe('withCredentials', () => {
+    test('with the default value: `false` does not include withCredentials on sources', async () => {
+      const PlayerWithManifest = withManifestAndPlayerProvider(MediaPlayer, {
+        initialManifestState: { ...manifestState, manifest: videoManifest, canvasIndex: 0, },
+        initialPlayerState: {},
+      });
+      render(
+        <ErrorBoundary>
+          <PlayerWithManifest />
+        </ErrorBoundary>
+      );
+      await waitFor(() => {
+        screen.getAllByTestId('videojs-video-element')[0].player;
+      });
+      const player = screen.getAllByTestId('videojs-video-element')[0].player;
+      const { sources } = player.options();
+      expect(sources.every(({ withCredentials }) => !withCredentials)).toBe(
+        true
+      );
+    });
+
+    test('with the explicit value: `false` does not include withCredentials on sources', async () => {
+      const PlayerWithManifest = withManifestAndPlayerProvider(MediaPlayer, {
+        initialManifestState: { ...manifestState, manifest: videoManifest, canvasIndex: 0, },
+        initialPlayerState: {},
+        withCredentials: false,
+      });
+      render(
+        <ErrorBoundary>
+          <PlayerWithManifest />
+        </ErrorBoundary>
+      );
+      await waitFor(() => {
+        screen.getAllByTestId('videojs-video-element')[0].player;
+      });
+      const player = screen.getAllByTestId('videojs-video-element')[0].player;
+      const { sources } = player.options();
+      expect(sources.every(({ withCredentials }) => !withCredentials)).toBe(
+        true
+      );
+    });
+
+    test('with the explicit value: `true` includes withCredentials on all sources', async () => {
+      const PlayerWithManifest = withManifestAndPlayerProvider(MediaPlayer, {
+        initialManifestState: { ...manifestState, manifest: videoManifest, canvasIndex: 0, },
+        initialPlayerState: {},
+        withCredentials: true,
+      });
+      render(
+        <ErrorBoundary>
+          <PlayerWithManifest />
+        </ErrorBoundary>
+      );
+      await waitFor(() => {
+        screen.getAllByTestId('videojs-video-element')[0].player;
+      });
+      const player = screen.getAllByTestId('videojs-video-element')[0].player;
+      const { sources } = player.options();
+      expect(sources.every(({ withCredentials }) => withCredentials)).toBe(
+        true
+      );
+    });
+  });
+
   describe('previous/next section buttons in the control bar', () => {
     describe('renders', () => {
       test('with a multi-Canvas regualr Manifest', async () => {
